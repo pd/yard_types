@@ -74,7 +74,9 @@ module YardTypes
     end
 
     def constant
-      Object.const_get(name)
+      name.split('::').reduce(Object) { |namespace, const|
+        namespace.const_get(const)
+      }
     end
   end
 

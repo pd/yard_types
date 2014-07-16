@@ -1,6 +1,8 @@
 # yard_types
 
+[![Gem Version](https://badge.fury.io/rb/yard_types.svg)](http://badge.fury.io/rb/yard_types)
 [![Build Status](https://travis-ci.org/pd/yard_types.svg?branch=master)](https://travis-ci.org/pd/yard_types)
+[![Dependency Status](https://gemnasium.com/pd/yard_types.svg)](https://gemnasium.com/pd/yard_types)
 
 Parse YARD type description strings -- eg `Array<#to_sym>` -- and use the
 resulting types to check type correctness of objects at runtime.

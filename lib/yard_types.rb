@@ -27,7 +27,22 @@ module YardTypes
     end
   end
 
+  # Parse a type string using the {Parser}, and return a
+  # {TypeConstraint} instance representing the described
+  # type.
+  #
+  # @param type [String] The YARD type description
+  # @return [TypeConstraint]
+  # @raise [SyntaxError] if the string could not be parsed
+  # @example
+  #   type = YardTypes.parse('MyClass, #quacks_like_my_class')
+  #   type.check(some_object)
+  def parse(type)
+    Parser.parse(type)
+  end
+
   # @return [Result]
+  # @todo deprecate; rename it +check+ to match everything else.
   def validate(type, obj)
     constraint = parse(type)
     if constraint.check(obj)
@@ -35,9 +50,5 @@ module YardTypes
     else
       Failure.new
     end
-  end
-
-  def parse(type)
-    Parser.parse(type)
   end
 end

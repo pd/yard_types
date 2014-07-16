@@ -65,7 +65,7 @@ module YardTypes
       @name = name
     end
 
-    # @return [String] returns the name.
+    # @return [String] a YARD type string describing this type.
     def to_s
       name
     end
@@ -92,7 +92,7 @@ module YardTypes
       @message = name[1..-1]
     end
 
-    # @param obj [Object] Any object.
+    # @param (see Type#check)
     # @return [Boolean] +true+ if the object responds to +message+.
     def check(obj)
       obj.respond_to? message
@@ -107,7 +107,7 @@ module YardTypes
     # the pseudo-class +Boolean+, which does not actually exist in Ruby,
     # but is commonly used to mean +TrueClass, FalseClass+.
     #
-    # @param obj [Object] Any object.
+    # @param (see Type#check)
     # @return [Boolean] +true+ if +obj.kind_of?(constant)+.
     def check(obj)
       if name == 'Boolean'
@@ -151,7 +151,7 @@ module YardTypes
       @literal_names ||= %w(true false nil void self)
     end
 
-    # @param obj [Object] Any object.
+    # @param (see Type#check)
     # @return [Boolean] +true+ if the object is exactly +true+, +false+, or
     #   +nil+ (depending on the value of +name+); for +void+ and +self+
     #   types, this method *always* returns +true+.
@@ -185,12 +185,12 @@ module YardTypes
       @types = types
     end
 
-    # @return [String] a YARD type description representing this type.
+    # @return (see Type#to_s)
     def to_s
       "%s<%s>" % [name, types.map(&:to_s).join(', ')]
     end
 
-    # @param obj [Object] Any object.
+    # @param (see Type#check)
     # @return [Boolean] +true+ if the object is both a kind of +name+, and all of
     #   its contents (if any) are of the types in +types+. Any combination, order,
     #   and count of content types is acceptable.
@@ -216,12 +216,12 @@ module YardTypes
       @types = types
     end
 
-    # @return [String] a YARD type description representing this type.
+    # @return (see Type#to_s)
     def to_s
       "%s(%s)" % [name, types.map(&:to_s).join(', ')]
     end
 
-    # @param obj [Object] Any object.
+    # @param (see Type#check)
     # @return [Boolean] +true+ if the collection's +length+ is exactly the length of
     #   the expected +types+, and each element with the collection is of the type
     #   specified for that index by +types+.
@@ -271,7 +271,7 @@ module YardTypes
     # Unlike the other types, {HashType} can result from two alternate syntaxes;
     # however, this method will *only* return the +{A => B}+ syntax.
     #
-    # @return [String] A YARD type description representing this type.
+    # @return (see Type#to_s)
     def to_s
       "{%s => %s}" % [
         key_types.map(&:to_s).join(', '),
@@ -279,9 +279,9 @@ module YardTypes
       ]
     end
 
-    # @param obj [Object] Any object.
+    # @param (see Type#check)
     # @return [Boolean] +true+ if the object responds to both +keys+ and +values+,
-    #   and every key type checks against a type in +key_types, and every value
+    #   and every key type checks against a type in +key_types+, and every value
     #   type checks against a type in +value_types+.
     def check(obj)
       return false unless obj.respond_to?(:keys) && obj.respond_to?(:values)

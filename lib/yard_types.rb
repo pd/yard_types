@@ -31,13 +31,14 @@ module YardTypes
   # {TypeConstraint} instance representing the described
   # type.
   #
-  # @param type [String] The YARD type description
+  # @param type [String, Array<String>] The YARD type description
   # @return [TypeConstraint]
   # @raise [SyntaxError] if the string could not be parsed
   # @example
   #   type = YardTypes.parse('MyClass, #quacks_like_my_class')
   #   type.check(some_object)
   def parse(type)
+    type = type.join(', ') if type.respond_to?(:join)
     Parser.parse(type)
   end
 

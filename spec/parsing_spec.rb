@@ -123,6 +123,20 @@ describe YardTypes, 'parsing' do
   end
 end
 
+describe YardTypes::Type, '.parse' do
+  it "can accept a single YARD type string" do
+    constraint = YardTypes.parse('Array, Hash')
+    expect(constraint).to be_instance_of(YardTypes::TypeConstraint)
+    expect(constraint.to_s).to eq('Array, Hash')
+  end
+
+  it "can accept an array of individual type strings, and return a single Constraint" do
+    constraint = YardTypes.parse(['Array', 'Hash'])
+    expect(constraint).to be_instance_of(YardTypes::TypeConstraint)
+    expect(constraint.to_s).to eq('Array, Hash')
+  end
+end
+
 describe YardTypes::Type, '#to_s' do
   [
     # Kind

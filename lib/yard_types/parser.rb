@@ -5,6 +5,9 @@ module YardTypes
   # Initial code taken from https://github.com/lsegal/yard-types-parser --
   # unfortunately that was never released as a gem; and the code on master
   # doesn't actually run.
+  #
+  # @api private
+  # @see YardTypes.parse
   class Parser
     TOKENS = {
       collection_start: /</,

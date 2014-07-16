@@ -89,6 +89,9 @@ describe YardTypes, 'type checking' do
   end
 
   context 'tuples' do
+    class ::MyTuple < Array
+    end
+
     let(:type) { '(String, Fixnum, #reverse)' }
 
     specify 'matches' do
@@ -106,6 +109,35 @@ describe YardTypes, 'type checking' do
       expect(type).not_to type_check(['foo'])
       expect(type).not_to type_check(['foo', 1])
       expect(type).not_to type_check(['foo', 1, [], true])
+    end
+
+    specify 'unspecified kind accepts any kind' do
+      tuple = MyTuple.new
+      tuple[0] = 'hi'
+      tuple[1] = 1
+      tuple[2] = []
+
+      expect(type).to type_check(tuple)
+    end
+
+    context 'specified kind' do
+      let(:type) { 'MyTuple(String, Fixnum)' }
+
+      specify 'kind + contents match' do
+        tuple = MyTuple.new
+        tuple[0] = 'hi'
+        tuple[1] = 1
+
+        expect(type).to type_check(tuple)
+      end
+
+      specify 'kind matches, contents do not' do
+        expect(type).not_to type_check(MyTuple.new)
+      end
+
+      specify 'contents match, but kind does not' do
+        expect(type).not_to type_check(['hi', 1])
+      end
     end
   end
 

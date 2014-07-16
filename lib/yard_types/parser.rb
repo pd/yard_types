@@ -53,7 +53,9 @@ module YardTypes
               name = nil
 
             when :tuple_start, :collection_start
-              name ||= "Array"
+              name ||=
+                token_type == :collection_start ? 'Array' : '<generic-tuple>'
+
               type =
                 if name == 'Hash' && token_type == :collection_start
                   contents = parse

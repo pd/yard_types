@@ -208,14 +208,17 @@ module YardTypes
   # that the contents of the collection must be exactly that size, and each element
   # must be of the exact type specified for that index.
   #
-  # @todo Tuples can also specify a KindType constraint that is currently
-  #   not enforced (eg, +LinkedList(A, B, C)+).
   # @todo The current implementation of type checking here requires that the collection
   #   respond to both +length+ and +[]+; this may not be ideal.
   class TupleType < CollectionType
+    def initialize(name, types)
+      @name  = name == '<generic-tuple>' ? nil : name
+      @types = types
+    end
+
     # @return [String] a YARD type description representing this type.
     def to_s
-      "(%s)" % [types.map(&:to_s).join(', ')]
+      "%s(%s)" % [name, types.map(&:to_s).join(', ')]
     end
 
     # @param obj [Object] Any object.
@@ -223,8 +226,10 @@ module YardTypes
     #   the expected +types+, and each element with the collection is of the type
     #   specified for that index by +types+.
     def check(obj)
+      return false unless name.nil? || KindType.new(name).check(obj)
       return false unless obj.respond_to?(:length) && obj.respond_to?(:[])
       return false unless obj.length == types.length
+
       enum = types.to_enum
       enum.with_index.all? do |t, i|
         t.check(obj[i])

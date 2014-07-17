@@ -6,6 +6,11 @@ describe 'Defensive error raising' do
     expect { type.check(nil) }.to raise_error(NotImplementedError)
   end
 
+  specify 'Type#description raises NotImplementedError' do
+    type = YardTypes::Type.new('Foo')
+    expect { type.description }.to raise_error(NotImplementedError)
+  end
+
   specify 'LiteralType raises when checking for an unsupported literal' do
     type = YardTypes::LiteralType.new('zero')
     expect { type.check(0) }.to raise_error(NotImplementedError, /zero/)

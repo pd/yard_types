@@ -1,5 +1,18 @@
 module YardTypes
 
+  # @api private
+  module OrList #:nodoc:
+    def or_list(ary)
+      size = ary.size
+      ary.to_enum.with_index.inject('') do |acc, (s, index)|
+        acc << s.to_s
+        acc << ", "    if index < size - 2
+        acc << ", or " if index == size - 2
+        acc
+      end
+    end
+  end
+
   # A +TypeConstraint+ specifies the set of acceptable types
   # which can satisfy the constraint. Parsing any YARD type
   # description will return a +TypeConstraint+ instance.
@@ -41,7 +54,7 @@ module YardTypes
     end
   end
 
-  # The base class for all supported types.
+  # @abstract The base class for all supported types.
   class Type
     # @return [String] the YARD string naming this type
     attr_accessor :name
@@ -70,6 +83,11 @@ module YardTypes
       name
     end
 
+    # @return [String] an English phrase describing this type.
+    def description
+      raise NotImplementedError
+    end
+
     # @param obj [Object] Any object.
     # @return [Boolean] whether the object is of this type.
     # @raise [NotImplementedError] must be handled by the subclasses.
@@ -90,6 +108,11 @@ module YardTypes
     def initialize(name)
       @name    = name
       @message = name[1..-1]
+    end
+
+    # (see Type#description)
+    def description
+      "an object that responds to #{name}"
     end
 
     # @param (see Type#check)
@@ -115,6 +138,11 @@ module YardTypes
       else
         obj.kind_of? constant
       end
+    end
+
+    # (see Type#description)
+    def description
+      name
     end
 
     # @return [Module] the constant specified by +name+.
@@ -151,6 +179,11 @@ module YardTypes
       @literal_names ||= %w(true false nil void self)
     end
 
+    # (see Type#description)
+    def description
+      name
+    end
+
     # @param (see Type#check)
     # @return [Boolean] +true+ if the object is exactly +true+, +false+, or
     #   +nil+ (depending on the value of +name+); for +void+ and +self+
@@ -175,6 +208,8 @@ module YardTypes
   # @todo The current implementation of type checking here requires that the collection
   #   respond to +all?+; this may not be ideal.
   class CollectionType < Type
+    include OrList
+
     # @return [Array<Type>] the acceptable types for this collection's contents.
     attr_accessor :types
 
@@ -185,9 +220,16 @@ module YardTypes
       @types = types
     end
 
-    # @return (see Type#to_s)
+    # (see Type#to_s)
     def to_s
       "%s<%s>" % [name, types.map(&:to_s).join(', ')]
+    end
+
+    # (see Type#description)
+    def description
+      article = name[0] =~ /[aeiou]/i ? 'an' : 'a'
+      type_descriptions = types.map &:description
+      "#{article} #{name} of (#{or_list(type_descriptions)})"
     end
 
     # @param (see Type#check)
@@ -216,9 +258,17 @@ module YardTypes
       @types = types
     end
 
-    # @return (see Type#to_s)
+    # (see Type#to_s)
     def to_s
       "%s(%s)" % [name, types.map(&:to_s).join(', ')]
+    end
+
+    # (see Type#description)
+    def description
+      kind = name || 'tuple'
+      article = kind[0] =~ /[aeiou]/i ? 'an' : 'a'
+      contents = types.map(&:description).join(', ')
+      "#{article} #{kind} containing (#{contents})"
     end
 
     # @param (see Type#check)
@@ -253,6 +303,8 @@ module YardTypes
   # @todo Enforce kind, eg +HashWithIndifferentAccess{#to_sym => Array}+,
   #   in case you _really_ care that it's indifferent. Maybe?
   class HashType < Type
+    include OrList
+
     # @return [Array<Type>] the set of acceptable types for keys
     attr_reader :key_types
 
@@ -279,6 +331,14 @@ module YardTypes
       ]
     end
 
+    # (see Type#description)
+    def description
+      article = name[0] =~ /[aeiou]/i ? 'an' : 'a'
+      key_descriptions = or_list(key_types.map(&:description))
+      value_descriptions = or_list(value_types.map(&:description))
+      "#{article} #{name} with keys of (#{key_descriptions}) and values of (#{value_descriptions})"
+    end
+
     # @param (see Type#check)
     # @return [Boolean] +true+ if the object responds to both +keys+ and +values+,
     #   and every key type checks against a type in +key_types+, and every value
@@ -289,5 +349,4 @@ module YardTypes
         obj.values.all? { |value| value_types.any? { |t| t.check(value) } }
     end
   end
-
 end

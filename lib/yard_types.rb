@@ -2,9 +2,12 @@ require "yard_types/version"
 require "yard_types/types"
 require "yard_types/parser"
 
+# {YardTypes} provides a parser for YARD type descriptions, and
+# testing whether objects are of the specified types.
 module YardTypes
   extend self
 
+  # @abstract Base class for {Success} and {Failure}
   class Result
     def initialize(pass = false)
       @pass = pass
@@ -15,12 +18,18 @@ module YardTypes
     end
   end
 
+  # Returned from {YardTypes.validate} when a type check succeeds,
+  # providing the particular type which satisfied the
+  # {TypeConstraint}.
   class Success < Result
     def initialize
       super(true)
     end
   end
 
+  # Returned from {YardTypes.validate} when a type check fails,
+  # providing a reference to the {TypeConstraint} and a means of
+  # generating error messages describing the error.
   class Failure < Result
     def initialize
       super(false)
@@ -42,7 +51,12 @@ module YardTypes
     Parser.parse(type)
   end
 
-  # @return [Result]
+  # Parses a type identifier with {#parse}, then validates that the
+  # given +obj+ satisfies the type constraint.
+  #
+  # @param type [String, Array<String>] A YARD type description; see {#parse}.
+  # @param obj [Object] Any object.
+  # @return [Result] success or failure.
   # @todo deprecate; rename it +check+ to match everything else.
   def validate(type, obj)
     constraint = parse(type)

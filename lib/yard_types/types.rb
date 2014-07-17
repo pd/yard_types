@@ -6,7 +6,7 @@ module YardTypes
   #
   # @see YardTypes.parse
   class TypeConstraint
-    # @return [Array<Type>]
+    # @return [Array<Type>] the list of types that will satisfy this constraint
     attr_reader :accepted_types
 
     # @param types [Array<Type>] the list of acceptable types
@@ -43,7 +43,7 @@ module YardTypes
 
   # The base class for all supported types.
   class Type
-    # @return [String]
+    # @return [String] the YARD string naming this type
     attr_accessor :name
 
     # @todo This interface was just hacked into place while

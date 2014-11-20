@@ -151,8 +151,8 @@ module YardTypes
     def constant
       @constant ||=
         begin
-          const = name.split('::').reduce(Object) { |namespace, const|
-            namespace.const_get(const)
+          const = name.split('::').reduce(Object) { |namespace, inner_const|
+            namespace.const_get(inner_const)
           }
 
           unless const.kind_of?(Module)
@@ -228,7 +228,7 @@ module YardTypes
     # (see Type#description)
     def description
       article = name[0] =~ /[aeiou]/i ? 'an' : 'a'
-      type_descriptions = types.map &:description
+      type_descriptions = types.map(&:description)
       "#{article} #{name} of (#{or_list(type_descriptions)})"
     end
 

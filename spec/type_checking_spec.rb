@@ -4,7 +4,7 @@ require 'set'
 describe YardTypes, 'type checking' do
   matcher :type_check do |obj|
     match do |type|
-      result = YardTypes.validate(type, obj)
+      result = YardTypes.check(type, obj)
       result.success?
     end
 

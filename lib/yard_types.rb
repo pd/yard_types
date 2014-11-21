@@ -18,7 +18,7 @@ module YardTypes
     end
   end
 
-  # Returned from {YardTypes.validate} when a type check succeeds,
+  # Returned from {YardTypes.check} when a type check succeeds,
   # providing the particular type which satisfied the
   # {TypeConstraint}.
   class Success < Result
@@ -27,7 +27,7 @@ module YardTypes
     end
   end
 
-  # Returned from {YardTypes.validate} when a type check fails,
+  # Returned from {YardTypes.check} when a type check fails,
   # providing a reference to the {TypeConstraint} and a means of
   # generating error messages describing the error.
   class Failure < Result
@@ -57,8 +57,7 @@ module YardTypes
   # @param type [String, Array<String>] A YARD type description; see {#parse}.
   # @param obj [Object] Any object.
   # @return [Result] success or failure.
-  # @todo deprecate; rename it +check+ to match everything else.
-  def validate(type, obj)
+  def check(type, obj)
     constraint = parse(type)
     if constraint.check(obj)
       Success.new

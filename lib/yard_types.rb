@@ -52,7 +52,7 @@ module YardTypes
   end
 
   # Parses a type identifier with {#parse}, then validates that the
-  # given +obj+ satisfies the type constraint.
+  # given `obj` satisfies the type constraint.
   #
   # @param type [String, Array<String>] A YARD type description; see {#parse}.
   # @param obj [Object] Any object.

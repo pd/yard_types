@@ -13,9 +13,9 @@ module YardTypes
     end
   end
 
-  # A +TypeConstraint+ specifies the set of acceptable types
+  # A `TypeConstraint` specifies the set of acceptable types
   # which can satisfy the constraint. Parsing any YARD type
-  # description will return a +TypeConstraint+ instance.
+  # description will return a `TypeConstraint` instance.
   #
   # @see YardTypes.parse
   class TypeConstraint
@@ -28,7 +28,7 @@ module YardTypes
     end
 
     # @param i [Fixnum]
-    # @return [Type] the type at index +i+
+    # @return [Type] the type at index `i`
     # @todo deprecate this; remnant from original TDD'd API.
     def [](i)
       accepted_types[i]
@@ -41,13 +41,13 @@ module YardTypes
     end
 
     # @param obj [Object] Any object.
-    # @return [Type, nil] The first type which matched +obj+,
-    #   or +nil+ if none.
+    # @return [Type, nil] the first type which matched `obj`,
+    #   or `nil` if none.
     def check(obj)
       accepted_types.find { |t| t.check(obj) }
     end
 
-    # @return [String] A YARD type string describing this set of
+    # @return [String] a YARD type string describing this set of
     #   types.
     def to_s
       accepted_types.map(&:to_s).join(', ')
@@ -96,15 +96,15 @@ module YardTypes
     end
   end
 
-  # A {DuckType} constraint is specified as +#some_message+,
+  # A {DuckType} constraint is specified as `#some_message`,
   # and indicates that the object must respond to the method
-  # +some_message+.
+  # `some_message`.
   class DuckType < Type
     # @return [String] The method the object must respond to;
-    #   this does not include the leading +#+ character.
+    #   this does not include the leading `#` character.
     attr_reader :message
 
-    # @param name [String] The YARD identifier, eg +#some_message+.
+    # @param name [String] The YARD identifier, eg `#some_message`.
     def initialize(name)
       @name    = name
       @message = name[1..-1]
@@ -116,22 +116,22 @@ module YardTypes
     end
 
     # @param (see Type#check)
-    # @return [Boolean] +true+ if the object responds to +message+.
+    # @return [Boolean] `true` if the object responds to `message`.
     def check(obj)
       obj.respond_to? message
     end
   end
 
-  # A {KindType} constraint is specified as +SomeModule+ or
-  # +SomeClass+, and indicates that the object must be a kind of that
+  # A {KindType} constraint is specified as `SomeModule` or
+  # `SomeClass`, and indicates that the object must be a kind of that
   # module.
   class KindType < Type
     # Type checks a given object. Special consideration is given to
-    # the pseudo-class +Boolean+, which does not actually exist in Ruby,
-    # but is commonly used to mean +TrueClass, FalseClass+.
+    # the pseudo-class `Boolean`, which does not actually exist in Ruby,
+    # but is commonly used to mean `TrueClass, FalseClass`.
     #
     # @param (see Type#check)
-    # @return [Boolean] +true+ if +obj.kind_of?(constant)+.
+    # @return [Boolean] `true` if `obj.kind_of?(constant)`.
     def check(obj)
       if name == 'Boolean'
         obj == true || obj == false
@@ -145,7 +145,7 @@ module YardTypes
       name
     end
 
-    # @return [Module] the constant specified by +name+.
+    # @return [Module] the constant specified by `name`.
     # @raise [TypeError] if the constant is neither a module nor a class
     # @raise [NameError] if the specified constant could not be loaded.
     def constant
@@ -165,14 +165,14 @@ module YardTypes
   end
 
   # A {LiteralType} constraint is specified by the name of one of YARD's
-  # supported "literals": +true+, +false+, +nil+, +void+, and +self+, and
+  # supported "literals": `true`, `false`, `nil`, `void`, and `self`, and
   # indicates that the object must be exactly one of those values.
   #
-  # However, +void+ and +self+ have no particular meaning: +void+ is typically
+  # However, `void` and `self` have no particular meaning: `void` is typically
   # used solely to specify that a method returns no meaningful types; and
-  # +self+ is used to specify that a method returns its receiver, generally
+  # `self` is used to specify that a method returns its receiver, generally
   # to indicate that calls can be chained. All values type check as valid
-  # objects for +void+ and +self+ literals.
+  # objects for `void` and `self` literals.
   class LiteralType < Type
     # @return [Array<String>] the list of supported literal identifiers.
     def self.names
@@ -185,9 +185,9 @@ module YardTypes
     end
 
     # @param (see Type#check)
-    # @return [Boolean] +true+ if the object is exactly +true+, +false+, or
-    #   +nil+ (depending on the value of +name+); for +void+ and +self+
-    #   types, this method *always* returns +true+.
+    # @return [Boolean] `true` if the object is exactly `true`, `false`, or
+    #   `nil` (depending on the value of `name`); for `void` and `self`
+    #   types, this method *always* returns `true`.
     # @raise [NotImplementedError] if an unsupported literal name is to be
     #   tested against.
     def check(obj)
@@ -201,12 +201,12 @@ module YardTypes
     end
   end
 
-  # A {CollectionType} is specified with the syntax +Kind<Some, #thing>+, and
-  # indicates that the object is a kind of +Kind+, containing only objects which
-  # type check against +Some+ or +#thing+.
+  # A {CollectionType} is specified with the syntax `Kind<Some, #thing>`, and
+  # indicates that the object is a kind of `Kind`, containing only objects which
+  # type check against `Some` or `#thing`.
   #
   # @todo The current implementation of type checking here requires that the collection
-  #   respond to +all?+; this may not be ideal.
+  #   respond to `all?`; this may not be ideal.
   class CollectionType < Type
     include OrList
 
@@ -233,8 +233,8 @@ module YardTypes
     end
 
     # @param (see Type#check)
-    # @return [Boolean] +true+ if the object is both a kind of +name+, and all of
-    #   its contents (if any) are of the types in +types+. Any combination, order,
+    # @return [Boolean] `true` if the object is both a kind of `name`, and all of
+    #   its contents (if any) are of the types in `types`. Any combination, order,
     #   and count of content types is acceptable.
     def check(obj)
       return false unless KindType.new(name).check(obj)
@@ -246,12 +246,12 @@ module YardTypes
     end
   end
 
-  # A {TupleType} is specified with the syntax +(Some, Types, #here)+, and indicates
+  # A {TupleType} is specified with the syntax `(Some, Types, #here)`, and indicates
   # that the contents of the collection must be exactly that size, and each element
   # must be of the exact type specified for that index.
   #
   # @todo The current implementation of type checking here requires that the collection
-  #   respond to both +length+ and +[]+; this may not be ideal.
+  #   respond to both `length` and `[]`; this may not be ideal.
   class TupleType < CollectionType
     def initialize(name, types)
       @name  = name == '<generic-tuple>' ? nil : name
@@ -272,9 +272,9 @@ module YardTypes
     end
 
     # @param (see Type#check)
-    # @return [Boolean] +true+ if the collection's +length+ is exactly the length of
-    #   the expected +types+, and each element with the collection is of the type
-    #   specified for that index by +types+.
+    # @return [Boolean] `true` if the collection's `length` is exactly the length of
+    #   the expected `types`, and each element with the collection is of the type
+    #   specified for that index by `types`.
     def check(obj)
       return false unless name.nil? || KindType.new(name).check(obj)
       return false unless obj.respond_to?(:length) && obj.respond_to?(:[])
@@ -287,20 +287,20 @@ module YardTypes
     end
   end
 
-  # A {HashType} is specified with the syntax +{KeyType =>
-  # ValueType}+, and indicates that all keys in the hash must be of
-  # type +KeyType+, and all values must be of type +ValueType+.
+  # A {HashType} is specified with the syntax `{KeyType => ValueType}`,
+  # and indicates that all keys in the hash must be of type
+  # `KeyType`, and all values must be of type `ValueType`.
   #
-  # An alternate syntax for {HashType} is also available as +Hash<A,
-  # B>+, but its usage is not recommended; it is less capable than the
-  # +{A => B}+ syntax, as some inner type constraints can not be
+  # An alternate syntax for {HashType} is also available as `Hash<A, B>`,
+  # but its usage is not recommended; it is less capable than the
+  # `{A => B}` syntax, as some inner type constraints can not be
   # parsed reliably.
   #
   # A {HashType} actually only requires that the object respond to
-  # both +keys+ and +values+; it should be capable of type checking
+  # both `keys` and `values`; it should be capable of type checking
   # any object which conforms to that interface.
   #
-  # @todo Enforce kind, eg +HashWithIndifferentAccess{#to_sym => Array}+,
+  # @todo Enforce kind, eg `HashWithIndifferentAccess{#to_sym => Array}`,
   #   in case you _really_ care that it's indifferent. Maybe?
   class HashType < Type
     include OrList
@@ -321,7 +321,7 @@ module YardTypes
     end
 
     # Unlike the other types, {HashType} can result from two alternate syntaxes;
-    # however, this method will *only* return the +{A => B}+ syntax.
+    # however, this method will *only* return the `{A => B}` syntax.
     #
     # @return (see Type#to_s)
     def to_s
@@ -340,9 +340,9 @@ module YardTypes
     end
 
     # @param (see Type#check)
-    # @return [Boolean] +true+ if the object responds to both +keys+ and +values+,
-    #   and every key type checks against a type in +key_types+, and every value
-    #   type checks against a type in +value_types+.
+    # @return [Boolean] `true` if the object responds to both `keys` and `values`,
+    #   and every key type checks against a type in `key_types`, and every value
+    #   type checks against a type in `value_types`.
     def check(obj)
       return false unless obj.respond_to?(:keys) && obj.respond_to?(:values)
       obj.keys.all? { |key| key_types.any? { |t| t.check(key) } } &&

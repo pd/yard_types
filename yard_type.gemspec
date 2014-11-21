@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Kyle Hargraves"]
   spec.email         = ["pd@krh.me"]
   spec.summary       = %q{Parse and validate objects against YARD type descriptions.}
-  spec.description   = %q{Your API docs say you return Array<#to_date>, but do you really?}
+  spec.description   = %q{Your API docs say you return an Array of Result objects, but do you really?}
   spec.homepage      = "https://github.com/pd/yard_types"
   spec.license       = "MIT"
 
@@ -24,4 +24,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "simplecov", "~> 0.7.1"
   spec.add_development_dependency "pry", "> 0"
   spec.add_development_dependency "coveralls", "> 0"
+  spec.add_development_dependency "yard", "~> 0.8"
 end

@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/pd/yard_types.svg?branch=master)](https://travis-ci.org/pd/yard_types)
 [![Dependency Status](https://gemnasium.com/pd/yard_types.svg)](https://gemnasium.com/pd/yard_types)
 [![Code Climate](https://codeclimate.com/github/pd/yard_types.png)](https://codeclimate.com/github/pd/yard_types)
-[![Coverage Status](https://coveralls.io/repos/pd/yard_types/badge.png)](https://coveralls.io/r/pd/yard_types)
+[![Coverage Status](https://coveralls.io/repos/pd/yard_types/badge.svg?branch=master)](https://coveralls.io/r/pd/yard_types?branch=master)
 [![Inline docs](http://inch-ci.org/github/pd/yard_types.svg?branch=master)](http://inch-ci.org/github/pd/yard_types)
 
 Parse YARD type description strings -- eg `Array<#to_sym>` -- and use the
